@@ -1,0 +1,85 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+     | POM Relationships
+     -->
+
+    <parent>
+        <groupId>net.codjo.pom</groupId>
+        <artifactId>codjo-pom-library</artifactId>
+        <version>SNAPSHOT</version>
+    </parent>
+    <groupId>net.codjo.agent</groupId>
+    <artifactId>codjo-agent</artifactId>
+    <version>1.42-SNAPSHOT</version>
+    <dependencies>
+
+        <!-- AGF -->
+        <dependency>
+            <groupId>net.codjo.logging</groupId>
+            <artifactId>codjo-logging</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.codjo.crypto</groupId>
+            <artifactId>codjo-crypto-common</artifactId>
+        </dependency>
+
+        <!-- jade -->
+        <dependency>
+            <groupId>jade</groupId>
+            <artifactId>jade</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jade</groupId>
+            <artifactId>http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jade</groupId>
+            <artifactId>jade-tools</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.3</version>
+        </dependency>
+        <!-- External -->
+        <dependency>
+            <groupId>picocontainer</groupId>
+            <artifactId>picocontainer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+
+        <!-- External -->
+        <dependency>
+            <groupId>net.codjo.test</groupId>
+            <artifactId>codjo-test-common</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!--
+    | Project Information
+    -->
+
+    <name>Lib &gt; Agent</name>
+    <description>Librairie contenant la couche SMA</description>
+    <inceptionYear>2006</inceptionYear>
+
+    <!--
+    | Environment Information
+    -->
+
+    <scm>
+        <connection>scm:git:https://github.com/codjo/codjo-agent.git</connection>
+        <developerConnection>scm:git:https://github.com/codjo/codjo-agent.git</developerConnection>
+        <url>https://github.com/codjo/codjo-agent</url>
+    </scm>
+
+</project>

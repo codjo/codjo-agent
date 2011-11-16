@@ -1,0 +1,45 @@
+net.codjo.agent
+	-> net.codjo.crypto.common
+	-> jade.content
+	-> jade.content.lang.sl
+	-> jade.content.onto.basic
+	-> jade.core
+	-> jade.core.behaviours
+	-> jade.domain
+	-> jade.domain.FIPAAgentManagement
+	-> jade.domain.JADEAgentManagement
+	-> jade.gui
+	-> jade.lang.acl
+	-> jade.util.leap
+	-> jade.wrapper
+	-> org.apache.commons.codec
+	-> org.apache.commons.codec.binary
+	-> org.picocontainer
+
+net.codjo.agent.behaviour
+	-> net.codjo.agent
+	-> jade.content
+	-> jade.content.lang.sl
+	-> jade.content.onto.basic
+	-> jade.core
+	-> jade.core.behaviours
+	-> jade.domain.JADEAgentManagement
+	-> jade.domain.introspection
+	-> jade.lang.acl
+	-> jade.proto
+
+net.codjo.agent.imtp
+	-> jade.core
+	-> jade.mtp
+	-> jade.util.leap
+
+net.codjo.agent.protocol
+	-> net.codjo.agent
+	-> net.codjo.agent.util
+	-> jade.domain.FIPAAgentManagement
+	-> jade.lang.acl
+	-> jade.proto
+	-> jade.core
+	-> jade.core.behaviours
+
+net.codjo.agent.util
