@@ -16,4 +16,22 @@ public class AgentStep {
             }
         };
     }
+
+
+    public static OneShotStep release(final Semaphore semaphore) {
+        return new OneShotStep() {
+            public void run(Agent agent) throws Exception {
+                semaphore.release();
+            }
+        };
+    }
+
+
+    public static OneShotStep acquire(final Semaphore semaphore) {
+        return new OneShotStep() {
+            public void run(Agent agent) throws Exception {
+                semaphore.acquire();
+            }
+        };
+    }
 }
