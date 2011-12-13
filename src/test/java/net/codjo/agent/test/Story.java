@@ -16,6 +16,8 @@ import net.codjo.test.common.LogString;
 import net.codjo.test.common.fixture.Fixture;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.defaults.DefaultPicoContainer;
+
+import static java.util.Arrays.asList;
 /**
  * Description d'un scenario de test unitaire. <p>Exemple d'utilisation :</p>
  * <pre>
@@ -259,7 +261,8 @@ public class Story implements Fixture {
 
 
         public void assertNumberOfAgentWithService(final int expectedCount, final String serviceType) {
-            story.masterAgent.record().addStep(new OneShotStep() {
+            String description = "assertNumberOfAgentWithService(" + expectedCount + "," + serviceType + ")";
+            story.masterAgent.record().addStep(new OneShotStep(description) {
                 public void run(Agent agent) throws AssertionFailedError {
                     story.agentContainerFixture.assertNumberOfAgentWithService(expectedCount, serviceType);
                 }
@@ -268,7 +271,8 @@ public class Story implements Fixture {
 
 
         public void assertAgentWithService(final String[] expectedLocalNames, final String serviceType) {
-            story.masterAgent.record().addStep(new OneShotStep() {
+            String description = "assertAgentWithService(" + asList(expectedLocalNames) + "," + serviceType + ")";
+            story.masterAgent.record().addStep(new OneShotStep(description) {
                 public void run(Agent agent) throws AssertionFailedError {
                     story.agentContainerFixture.assertAgentWithService(expectedLocalNames, serviceType);
                 }
@@ -277,7 +281,7 @@ public class Story implements Fixture {
 
 
         public void assertNotContainsAgent(final String agentNickName) {
-            story.masterAgent.record().addStep(new OneShotStep() {
+            story.masterAgent.record().addStep(new OneShotStep("assertNotContainsAgent(" + agentNickName + ")") {
                 public void run(Agent agent) throws AssertionFailedError {
                     story.agentContainerFixture.assertNotContainsAgent(agentNickName);
                 }
@@ -286,7 +290,7 @@ public class Story implements Fixture {
 
 
         public void assertContainsAgent(final String agentNickName) {
-            story.masterAgent.record().addStep(new OneShotStep() {
+            story.masterAgent.record().addStep(new OneShotStep("assertContainsAgent(" + agentNickName + ")") {
                 public void run(Agent agent) throws AssertionFailedError {
                     story.agentContainerFixture.assertContainsAgent(agentNickName);
                 }

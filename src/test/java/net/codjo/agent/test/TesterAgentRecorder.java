@@ -104,7 +104,7 @@ public class TesterAgentRecorder {
 
 
     public Then registerToDF(final DFService.AgentDescription agentDescription) {
-        addStep(new OneShotStep() {
+        addStep(new OneShotStep("registerToDF(" + agentDescription + ")") {
             public void run(Agent agent) throws AssertionFailedError {
                 try {
                     DFService.register(agent, agentDescription);
@@ -112,12 +112,6 @@ public class TesterAgentRecorder {
                 catch (Exception exception) {
                     throw new AssertionFailedError("Impossible de s'enregistrer auprès du DF : " + exception);
                 }
-            }
-
-
-            @Override
-            public String toString() {
-                return "regsiterToDF[" + agentDescription + "]";
             }
         });
         return new OnlyThen();

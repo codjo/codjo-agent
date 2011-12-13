@@ -34,6 +34,7 @@ net.codjo.agent.test
 	-> net.codjo.agent.imtp
 	-> net.codjo.test.common
 	-> net.codjo.test.common.fixture
+	-> net.codjo.test.common.matcher
     -> jade.core
 	-> org.picocontainer
 	-> org.picocontainer.defaults

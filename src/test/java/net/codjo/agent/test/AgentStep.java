@@ -10,7 +10,7 @@ public class AgentStep {
 
 
     public static OneShotStep logInfo(final LogString log, final String message) {
-        return new OneShotStep() {
+        return new OneShotStep("logInfo[" + message + ']') {
             public void run(Agent agent) throws Exception {
                 log.info(message);
             }
@@ -19,7 +19,7 @@ public class AgentStep {
 
 
     public static OneShotStep release(final Semaphore semaphore) {
-        return new OneShotStep() {
+        return new OneShotStep("release[semaphore]") {
             public void run(Agent agent) throws Exception {
                 semaphore.release();
             }
@@ -28,7 +28,7 @@ public class AgentStep {
 
 
     public static OneShotStep acquire(final Semaphore semaphore) {
-        return new OneShotStep() {
+        return new OneShotStep("acquire[semaphore]") {
             public void run(Agent agent) throws Exception {
                 semaphore.acquire();
             }
