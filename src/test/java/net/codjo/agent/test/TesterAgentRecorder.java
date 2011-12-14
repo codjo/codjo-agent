@@ -4,19 +4,20 @@
  * Copyright (c) 2001 AGF Asset Management.
  */
 package net.codjo.agent.test;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import junit.framework.AssertionFailedError;
 import net.codjo.agent.AclMessage;
 import net.codjo.agent.Agent;
 import net.codjo.agent.Aid;
 import net.codjo.agent.Behaviour;
 import net.codjo.agent.DFService;
 import net.codjo.agent.MessageTemplate;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import junit.framework.AssertionFailedError;
 /**
  *
  */
+@SuppressWarnings({"OverlyCoupledClass"})
 public class TesterAgentRecorder {
     private List<Step> triggers = new ArrayList<Step>();
     private StoryErrorManager errorManager = new StoryErrorManager();
@@ -91,27 +92,19 @@ public class TesterAgentRecorder {
 
 
     public Then release(final Semaphore semaphore) {
-        addStep(new OneShotStep() {
-            public void run(Agent agent) throws Exception {
-                semaphore.release();
-            }
-        });
+        addStep(AgentStep.release(semaphore));
         return new OnlyThen();
     }
 
 
     public Then acquire(final Semaphore semaphore) {
-        addStep(new OneShotStep() {
-            public void run(Agent agent) throws Exception {
-                semaphore.acquire();
-            }
-        });
+        addStep(AgentStep.acquire(semaphore));
         return new OnlyThen();
     }
 
 
     public Then registerToDF(final DFService.AgentDescription agentDescription) {
-        addStep(new OneShotStep() {
+        addStep(new OneShotStep("registerToDF(" + agentDescription + ")") {
             public void run(Agent agent) throws AssertionFailedError {
                 try {
                     DFService.register(agent, agentDescription);
@@ -119,12 +112,6 @@ public class TesterAgentRecorder {
                 catch (Exception exception) {
                     throw new AssertionFailedError("Impossible de s'enregistrer auprès du DF : " + exception);
                 }
-            }
-
-
-            @Override
-            public String toString() {
-                return "regsiterToDF[" + agentDescription + "]";
             }
         });
         return new OnlyThen();
