@@ -1,16 +1,16 @@
 package net.codjo.agent.test;
+import java.io.IOException;
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 import net.codjo.agent.AclMessage;
 import net.codjo.agent.Agent;
 import net.codjo.agent.Aid;
 import net.codjo.agent.ContainerFailureException;
 import net.codjo.agent.MessageTemplate;
 import net.codjo.agent.ServiceMock;
-import static net.codjo.agent.test.AgentAssert.log;
-import static net.codjo.agent.test.AgentStep.logInfo;
 import net.codjo.test.common.LogString;
-import java.io.IOException;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+
+import static net.codjo.agent.test.AgentStep.logInfo;
 
 public class StoryTest extends TestCase {
     private LogString log = new LogString();
@@ -205,7 +205,7 @@ public class StoryTest extends TestCase {
     }
 
 
-    public void test_semaphore() throws Exception {
+    public void test_semaphore_agentLevel() throws Exception {
         Semaphore semaphore = new Semaphore();
 
         story.record().startTester("second")
@@ -218,7 +218,49 @@ public class StoryTest extends TestCase {
               .then()
               .release(semaphore);
 
-        story.record().addAssert(log(log, "first, second"));
+        story.record().assertLog(log, "first, second");
+
+        story.execute();
+    }
+
+
+    public void test_semaphore_acquire() throws Exception {
+        Semaphore semaphore = new Semaphore();
+
+        story.record().startTester("second")
+              .acquire(semaphore)
+              .then()
+              .perform(logInfo(log, "second"));
+
+        story.record()
+              .logInfo(log, "first");
+
+        story.record()
+              .release(semaphore);
+
+        story.record()
+              .assertLog(log, "first, second");
+
+        story.execute();
+    }
+
+
+    public void test_semaphore_release() throws Exception {
+        Semaphore semaphore = new Semaphore();
+
+        story.record().startTester("first")
+              .perform(logInfo(log, "first"))
+              .then()
+              .release(semaphore);
+
+        story.record()
+              .acquire(semaphore);
+
+        story.record()
+              .logInfo(log, "second");
+
+        story.record()
+              .assertLog(log, "first, second");
 
         story.execute();
     }
@@ -288,7 +330,7 @@ public class StoryTest extends TestCase {
                       log.info("service actif");
                   }
               });
-        story.record().addAssert(log(log, "service actif"));
+        story.record().assertLog(log, "service actif");
         story.execute();
     }
 

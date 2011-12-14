@@ -1,4 +1,8 @@
 package net.codjo.agent.test;
+import java.util.ArrayList;
+import java.util.List;
+import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
 import net.codjo.agent.Agent;
 import net.codjo.agent.AgentContainer;
 import net.codjo.agent.AgentController;
@@ -8,13 +12,12 @@ import net.codjo.agent.JadeWrapper;
 import net.codjo.agent.Service;
 import net.codjo.agent.imtp.NoConnectionIMTPManager;
 import net.codjo.agent.test.AgentContainerFixture.Runnable;
+import net.codjo.test.common.LogString;
 import net.codjo.test.common.fixture.Fixture;
-import java.util.ArrayList;
-import java.util.List;
-import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.defaults.DefaultPicoContainer;
+
+import static java.util.Arrays.asList;
 /**
  * Description d'un scenario de test unitaire. <p>Exemple d'utilisation :</p>
  * <pre>
@@ -237,13 +240,29 @@ public class Story implements Fixture {
         }
 
 
+        public void acquire(Semaphore semaphore) {
+            story.masterAgent.record().addStep(AgentStep.acquire(semaphore));
+        }
+
+
+        public void release(Semaphore semaphore) {
+            story.masterAgent.record().addStep(AgentStep.release(semaphore));
+        }
+
+
+        public void logInfo(final LogString log, final String message) {
+            story.masterAgent.record().addStep(AgentStep.logInfo(log, message));
+        }
+
+
         public void addAssert(final AgentAssert.Assertion assertion) {
             story.masterAgent.record().addStep(new AssertStep(story, assertion));
         }
 
 
         public void assertNumberOfAgentWithService(final int expectedCount, final String serviceType) {
-            story.masterAgent.record().addStep(new OneShotStep() {
+            String description = "assertNumberOfAgentWithService(" + expectedCount + "," + serviceType + ")";
+            story.masterAgent.record().addStep(new OneShotStep(description) {
                 public void run(Agent agent) throws AssertionFailedError {
                     story.agentContainerFixture.assertNumberOfAgentWithService(expectedCount, serviceType);
                 }
@@ -252,7 +271,8 @@ public class Story implements Fixture {
 
 
         public void assertAgentWithService(final String[] expectedLocalNames, final String serviceType) {
-            story.masterAgent.record().addStep(new OneShotStep() {
+            String description = "assertAgentWithService(" + asList(expectedLocalNames) + "," + serviceType + ")";
+            story.masterAgent.record().addStep(new OneShotStep(description) {
                 public void run(Agent agent) throws AssertionFailedError {
                     story.agentContainerFixture.assertAgentWithService(expectedLocalNames, serviceType);
                 }
@@ -261,7 +281,7 @@ public class Story implements Fixture {
 
 
         public void assertNotContainsAgent(final String agentNickName) {
-            story.masterAgent.record().addStep(new OneShotStep() {
+            story.masterAgent.record().addStep(new OneShotStep("assertNotContainsAgent(" + agentNickName + ")") {
                 public void run(Agent agent) throws AssertionFailedError {
                     story.agentContainerFixture.assertNotContainsAgent(agentNickName);
                 }
@@ -270,11 +290,16 @@ public class Story implements Fixture {
 
 
         public void assertContainsAgent(final String agentNickName) {
-            story.masterAgent.record().addStep(new OneShotStep() {
+            story.masterAgent.record().addStep(new OneShotStep("assertContainsAgent(" + agentNickName + ")") {
                 public void run(Agent agent) throws AssertionFailedError {
                     story.agentContainerFixture.assertContainsAgent(agentNickName);
                 }
             });
+        }
+
+
+        public void assertLog(final LogString log, final String expectedLog) {
+            addAssert(AgentAssert.log(log, expectedLog));
         }
 
 
