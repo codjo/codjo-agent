@@ -6,6 +6,7 @@ import junit.framework.AssertionFailedError;
 import net.codjo.agent.Agent;
 import net.codjo.agent.AgentContainer;
 import net.codjo.agent.AgentController;
+import net.codjo.agent.Aid;
 import net.codjo.agent.ContainerConfiguration;
 import net.codjo.agent.ContainerFailureException;
 import net.codjo.agent.JadeWrapper;
@@ -219,12 +220,22 @@ public class Story implements Fixture {
         }
 
 
+        public void startAgent(Aid localAid, final Agent agent) {
+            startAgent(localAid.getLocalName(), agent);
+        }
+
+
         public void startAgent(final String nickName, final Agent agent) {
             if (agent instanceof TesterAgent) {
                 story.testerAgents.add((TesterAgent)agent);
                 ((TesterAgent)agent).addStoryListener(new TesterAgentListenerLog(nickName));
             }
             story.masterAgent.record().addStep(story.createStartAgentStep(nickName, agent));
+        }
+
+
+        public TesterAgentRecorder startTester(Aid localAid) {
+            return startTester(localAid.getLocalName());
         }
 
 

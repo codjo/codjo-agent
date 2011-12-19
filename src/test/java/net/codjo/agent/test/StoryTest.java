@@ -53,12 +53,14 @@ public class StoryTest extends TestCase {
 
     public void test_startAgent() throws Exception {
         TesterAgent first = new TesterAgent();
+        Aid firstAid = new Aid("first");
+
         first.record().receiveMessage().log(log, "received OK");
 
         TesterAgent second = new TesterAgent();
-        second.record().sendMessage(AclMessage.Performative.INFORM, new Aid("first"), "message content");
+        second.record().sendMessage(AclMessage.Performative.INFORM, firstAid, "message content");
 
-        story.record().startAgent("first", first);
+        story.record().startAgent(firstAid, first);
         story.record().startAgent("second", second);
         story.execute();
 
@@ -76,13 +78,15 @@ public class StoryTest extends TestCase {
 
 
     public void test_testerAgent_assertFailure() throws Exception {
+        Aid firstAid = new Aid("first");
+
         story.setTimeout(100);
-        story.record().startTester("first")
+        story.record().startTester(firstAid)
               .receiveMessage()
               .assertReceivedMessage(MessageTemplate.matchPerformative(AclMessage.Performative.AGREE));
 
         story.record().startTester("second")
-              .sendMessage(AclMessage.Performative.INFORM, new Aid("first"), "message content");
+              .sendMessage(AclMessage.Performative.INFORM, firstAid, "message content");
 
         try {
             story.execute();
