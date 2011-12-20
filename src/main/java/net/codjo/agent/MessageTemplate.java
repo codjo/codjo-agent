@@ -78,6 +78,11 @@ public final class MessageTemplate {
     }
 
 
+    public static MessageTemplate not(MessageTemplate value) {
+        return new MessageTemplate(jade.lang.acl.MessageTemplate.not(value.jadeTemplate));
+    }
+
+
     jade.lang.acl.MessageTemplate getJadeTemplate() {
         return jadeTemplate;
     }
