@@ -309,8 +309,13 @@ public class Story implements Fixture {
         }
 
 
-        public void assertLog(final LogString log, final String expectedLog) {
-            addAssert(AgentAssert.log(log, expectedLog));
+        public void assertLog(final LogString log, final String expectedLogs) {
+            addAssert(AgentAssert.log(log, expectedLogs));
+        }
+
+
+        public void assertLogContains(final LogString log, final String... expectedParts) {
+            addAssert(AgentAssert.logContains(log, expectedParts));
         }
 
 
