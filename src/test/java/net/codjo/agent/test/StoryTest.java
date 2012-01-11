@@ -11,6 +11,7 @@ import net.codjo.agent.ServiceMock;
 import net.codjo.test.common.LogString;
 
 import static net.codjo.agent.test.AgentStep.logInfo;
+import static net.codjo.test.common.matcher.JUnitMatchers.*;
 
 public class StoryTest extends TestCase {
     private LogString log = new LogString();
@@ -267,6 +268,26 @@ public class StoryTest extends TestCase {
               .assertLog(log, "first, second");
 
         story.execute();
+    }
+
+
+    public void test_assertLogContains() throws Exception {
+        story.record()
+              .logInfo(log, "first and second");
+
+        story.record()
+              .assertLogContains(log, "first", "second", "and");
+
+        story.record()
+              .assertLogContains(log, "third");
+
+        try {
+            story.execute();
+            unitTestShouldFail();
+        }
+        catch (AssertionFailedError ex) {
+            assertThat(ex.getMessage(), containsString("a string containing \"third\""));
+        }
     }
 
 
