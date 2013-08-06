@@ -15,6 +15,7 @@ import net.codjo.agent.imtp.NoConnectionIMTPManager;
 import net.codjo.agent.test.AgentContainerFixture.Runnable;
 import net.codjo.test.common.LogString;
 import net.codjo.test.common.fixture.Fixture;
+import org.apache.commons.lang.StringUtils;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.defaults.DefaultPicoContainer;
 
@@ -155,8 +156,8 @@ public class Story implements Fixture {
     private void assertStoryFinished(TesterAgent testerAgent) {
         if (!testerAgent.isStoryFinished()) {
             List<Step> list = testerAgent.record().getSteps();
-            Assert.fail("steps restant pour '" + testerAgent.getAID().getLocalName() + "': "
-                        + list.toString());
+            Assert.fail("steps restant pour '" + testerAgent.getAID().getLocalName() + "':\n\t- "
+                        + StringUtils.join(list, ",\n\t- ") + '\n');
         }
     }
 
@@ -422,6 +423,16 @@ public class Story implements Fixture {
                 throw failure;
             }
         }
+
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder();
+            sb.append("RunnableStep[");
+            sb.append(runnable);
+            sb.append(']');
+            return sb.toString();
+        }
     }
     private static class AssertStep extends OneShotStep {
         private final AgentAssert.Assertion assertion;
@@ -436,6 +447,15 @@ public class Story implements Fixture {
 
         public void run(Agent agent) throws AssertionFailedError {
             story.agentContainerFixture.assertUntilOk(assertion);
+        }
+
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("AssertStep[");
+            sb.append(assertion);
+            sb.append(']');
+            return sb.toString();
         }
     }
 }

@@ -134,7 +134,7 @@ public class StoryTest extends TestCase {
             unitTestShouldFail();
         }
         catch (AssertionFailedError ex) {
-            assertEquals("steps restant pour 'fede': [ReceiveMessageStep[Match ALL Template]]",
+            assertEquals("steps restant pour 'fede':\n\t- ReceiveMessageStep[Match ALL Template]\n",
                          ex.getMessage());
         }
     }
