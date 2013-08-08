@@ -14,17 +14,21 @@ public class Semaphore {
     private long count = 0;
 
 
-    public void acquire(int tokenCount) {
+    public int acquire(int tokenCount) {
+        int nbAcquired = 0;
         for (int i = 0; i < tokenCount; i++) {
-            acquire();
+            if (acquire()) {
+                nbAcquired++;
+            }
         }
+        return nbAcquired;
     }
 
 
-    public void acquire() {
+    public boolean acquire() {
         synchronized (lock) {
             if (decrementCounter()) {
-                return;
+                return true; // acquired
             }
             try {
                 lock.wait(timeout);
@@ -32,7 +36,7 @@ public class Semaphore {
             catch (InterruptedException e) {
                 ;
             }
-            decrementCounter();
+            return decrementCounter();
         }
     }
 
@@ -55,6 +59,11 @@ public class Semaphore {
 
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+
+    public long getTimeout() {
+        return timeout;
     }
 
 

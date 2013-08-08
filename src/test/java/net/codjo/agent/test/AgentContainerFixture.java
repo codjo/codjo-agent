@@ -4,6 +4,11 @@
  * Copyright (c) 2001 AGF Asset Management.
  */
 package net.codjo.agent.test;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
 import net.codjo.agent.AclMessage;
 import net.codjo.agent.Agent;
 import net.codjo.agent.AgentContainer;
@@ -18,11 +23,8 @@ import net.codjo.agent.MessageTemplate;
 import net.codjo.agent.behaviour.OneShotBehaviour;
 import net.codjo.agent.test.Story.ConnectionType;
 import net.codjo.test.common.fixture.Fixture;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 /**
  * Fixture pour l'utilisation d'un {@link net.codjo.agent.AgentContainer}.
  *
@@ -221,6 +223,12 @@ public class AgentContainerFixture implements Fixture {
             public void check() {
                 Assert.assertFalse(doesContainsAgent(agentLocalAID));
             }
+
+
+            @Override
+            public String toString() {
+                return "waitForAgentDeath(" + agentLocalAID + ')';
+            }
         });
     }
 
@@ -284,6 +292,12 @@ public class AgentContainerFixture implements Fixture {
                 Assert.assertEquals("Nombre d'agent avec service '" + serviceType + "'",
                                     expectedCount, aids.length);
             }
+
+
+            @Override
+            public String toString() {
+                return "assertNumberOfAgentWithService(" + expectedCount + ',' + serviceType + ')';
+            }
         });
     }
 
@@ -300,6 +314,13 @@ public class AgentContainerFixture implements Fixture {
                     Assert.assertTrue(aid.getLocalName() + " is not expected",
                                       expected.contains(aid.getLocalName()));
                 }
+            }
+
+
+            @Override
+            public String toString() {
+                return "assertAgentWithService({" + StringUtils.join(expectedLocalNames, ',') + "}," + serviceType
+                       + ')';
             }
         });
     }
@@ -321,6 +342,12 @@ public class AgentContainerFixture implements Fixture {
                 Assert.assertTrue("Agent '" + localName + "' existe",
                                   doesContainsAgent(localName));
             }
+
+
+            @Override
+            public String toString() {
+                return "assertContainsAgent(" + localName + ')';
+            }
         });
     }
 
@@ -331,6 +358,12 @@ public class AgentContainerFixture implements Fixture {
                 Assert.assertTrue("Agent '" + name + "' existe",
                                   doesContainsAgent(oneContainer, name));
             }
+
+
+            @Override
+            public String toString() {
+                return "assertContainsAgent(" + name + ')';
+            }
         });
     }
 
@@ -340,6 +373,12 @@ public class AgentContainerFixture implements Fixture {
             public void check() {
                 Assert.assertFalse("Agent '" + localName + "' n'existe pas",
                                    doesContainsAgent(localName));
+            }
+
+
+            @Override
+            public String toString() {
+                return "assertNotContainsAgent(" + localName + ')';
             }
         });
     }
@@ -405,6 +444,9 @@ public class AgentContainerFixture implements Fixture {
         while (tryCount < maxTryBeforeFailure - 1 && error != null);
 
         if (error != null) {
+            Logger.getLogger(getClass())
+                  .error("\n!!!\n!!! AgentAssert failed after " + (tryCount + 1) + " tries, with a timeout of "
+                         + assertTimeout + " ms per try\n!!!");
             throw error;
         }
     }
@@ -412,6 +454,11 @@ public class AgentContainerFixture implements Fixture {
 
     public void setMaxTryBeforeFailure(int maxTryBeforeFailure) {
         this.maxTryBeforeFailure = maxTryBeforeFailure;
+    }
+
+
+    public int getMaxTryBeforeFailure() {
+        return maxTryBeforeFailure;
     }
 
 
