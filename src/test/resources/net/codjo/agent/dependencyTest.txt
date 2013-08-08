@@ -35,6 +35,7 @@ net.codjo.agent.test
 	-> net.codjo.test.common
 	-> net.codjo.test.common.fixture
 	-> net.codjo.test.common.matcher
+	-> net.codjo.util.time
 	-> org.apache.commons.lang
     -> jade.core
 	-> org.picocontainer

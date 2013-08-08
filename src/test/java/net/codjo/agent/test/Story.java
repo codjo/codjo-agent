@@ -15,7 +15,9 @@ import net.codjo.agent.imtp.NoConnectionIMTPManager;
 import net.codjo.agent.test.AgentContainerFixture.Runnable;
 import net.codjo.test.common.LogString;
 import net.codjo.test.common.fixture.Fixture;
+import net.codjo.util.time.Chronometer;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.defaults.DefaultPicoContainer;
 
@@ -43,6 +45,7 @@ public class Story implements Fixture {
     private Semaphore storyEndSemaphore = new Semaphore();
     private List<TesterAgent> testerAgents = new ArrayList<TesterAgent>();
     private ContainerConfiguration configuration;
+    private LogString logString;
 
 
     public Story() {
@@ -61,6 +64,12 @@ public class Story implements Fixture {
 
 
     public Story(AgentContainerFixture fixture, ConnectionType connectionType) {
+        this(fixture, connectionType, null);
+    }
+
+
+    protected Story(AgentContainerFixture fixture, ConnectionType connectionType, LogString logString) {
+        this.logString = (logString == null) ? new LogString() : logString;
         this.agentContainerFixture = fixture;
         setTimeout(Semaphore.DEFAULT_TIMEOUT * 2);
 
@@ -119,22 +128,43 @@ public class Story implements Fixture {
 
 
     public void execute() throws ContainerFailureException {
-        getErrorManager().setSemaphore(storyEndSemaphore);
+        Logger log = Logger.getLogger(getClass());
+        log.info("Executing Story with timeout=" + storyEndSemaphore.getTimeout() + " ms, assertTimeout="
+                 + agentContainerFixture.getAssertTimeout() + " ms, maxTryBeforeFailure="
+                 + agentContainerFixture.getMaxTryBeforeFailure());
+        Chronometer chronometer = new Chronometer();
+        chronometer.start();
+        try {
+            getErrorManager().setSemaphore(storyEndSemaphore);
 
-        setErrorManager();
-        listenEndOfStory();
+            setErrorManager();
+            listenEndOfStory();
 
-        agentContainerFixture.startNewAgent("unit-test-director", masterAgent);
+            agentContainerFixture.startNewAgent("unit-test-director", masterAgent);
 
-        waitThatAllTesterAgentHasFinished();
+            int nbUnexecutedSteps = waitThatAllTesterAgentHasFinished();
+            if (nbUnexecutedSteps > 0) {
+                log.error(
+                      "\n!!!\n!!! A Story timeout happened => " + nbUnexecutedSteps + " steps were not executed\n!!!");
+            }
 
-        getErrorManager().assertNoError();
-        assertAllStoriesFinished();
+            getErrorManager().assertNoError();
+            assertAllStoriesFinished();
+        }
+        finally {
+            chronometer.stop();
+            log.info("The story was executed in " + chronometer.getDelay() + " ms");
+        }
     }
 
 
     public void setAssertTimeout(long assertTimeout) {
         agentContainerFixture.setAssertTimeout(assertTimeout);
+    }
+
+
+    public void setMaxTryBeforeFailure(int maxTryBeforeFailure) {
+        agentContainerFixture.setMaxTryBeforeFailure(maxTryBeforeFailure);
     }
 
 
@@ -167,8 +197,13 @@ public class Story implements Fixture {
     }
 
 
-    private void waitThatAllTesterAgentHasFinished() {
-        storyEndSemaphore.acquire(testerAgents.size() + 1);
+    /**
+     * @return The number of remaining steps.
+     */
+    private int waitThatAllTesterAgentHasFinished() {
+        int tokenCount = testerAgents.size() + 1;
+        int acquired = storyEndSemaphore.acquire(tokenCount);
+        return tokenCount - acquired;
     }
 
 

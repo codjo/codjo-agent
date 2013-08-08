@@ -24,6 +24,7 @@ import net.codjo.agent.behaviour.OneShotBehaviour;
 import net.codjo.agent.test.Story.ConnectionType;
 import net.codjo.test.common.fixture.Fixture;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 /**
  * Fixture pour l'utilisation d'un {@link net.codjo.agent.AgentContainer}.
  *
@@ -443,6 +444,9 @@ public class AgentContainerFixture implements Fixture {
         while (tryCount < maxTryBeforeFailure - 1 && error != null);
 
         if (error != null) {
+            Logger.getLogger(getClass())
+                  .error("\n!!!\n!!! AgentAssert failed after " + (tryCount + 1) + " tries, with a timeout of "
+                         + assertTimeout + " ms per try\n!!!");
             throw error;
         }
     }
@@ -450,6 +454,11 @@ public class AgentContainerFixture implements Fixture {
 
     public void setMaxTryBeforeFailure(int maxTryBeforeFailure) {
         this.maxTryBeforeFailure = maxTryBeforeFailure;
+    }
+
+
+    public int getMaxTryBeforeFailure() {
+        return maxTryBeforeFailure;
     }
 
 
