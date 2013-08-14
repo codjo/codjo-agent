@@ -126,16 +126,45 @@ public class StoryTest extends TestCase {
 
 
     public void test_receiveMessageTimeout() throws Exception {
-        story.record().startTester("fede").receiveMessage();
+        final ListAppender logs = ListAppender.createAndAddToRootLogger();
 
         try {
-            story.setTimeout(100);
-            story.execute();
-            unitTestShouldFail();
+            story.record().startTester("fede").receiveMessage();
+
+            final int storyTimeout = 100;
+            final int assertTimeout = 20;
+            final int maxTryBeforeFailure = 50;
+
+            try {
+                story.setTimeout(storyTimeout);
+                story.setAssertTimeout(assertTimeout);
+                story.setMaxTryBeforeFailure(maxTryBeforeFailure);
+                story.execute();
+                unitTestShouldFail();
+            }
+            catch (AssertionFailedError ex) {
+                assertEquals("steps restant pour 'fede':\n\t- ReceiveMessageStep[Match ALL Template]\n",
+                             ex.getMessage());
+            }
+
+            try {
+                assertTrue("Actual timeout values logged",
+                           logs.matchesOneLine("INFO: Executing Story with timeout=" + storyTimeout +
+                                               " ms, assertTimeout=" + assertTimeout + " ms, maxTryBeforeFailure="
+                                               + maxTryBeforeFailure));
+
+                assertTrue("Story execution time logged", logs.matchesOneLine(
+                      "INFO: The story was executed in [1-9][0-9]* ms"));
+                assertTrue("Timeout logged", logs.matchesOneLine(
+                      "ERROR: \n!!!\n!!! A Story timeout happened => [1-9][0-9]* steps were not executed\n!!!"));
+            }
+            catch (AssertionFailedError afe) {
+                logs.printTo(System.out);
+                throw afe;
+            }
         }
-        catch (AssertionFailedError ex) {
-            assertEquals("steps restant pour 'fede': [ReceiveMessageStep[Match ALL Template]]",
-                         ex.getMessage());
+        finally {
+            logs.removeFromRootLogger();
         }
     }
 

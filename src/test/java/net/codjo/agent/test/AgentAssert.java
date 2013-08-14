@@ -3,6 +3,7 @@ import java.util.regex.Pattern;
 import junit.framework.Assert;
 import net.codjo.agent.Behaviour;
 import net.codjo.test.common.LogString;
+import org.apache.commons.lang.StringUtils;
 
 import static net.codjo.test.common.matcher.JUnitMatchers.*;
 
@@ -22,6 +23,12 @@ public class AgentAssert {
             public void check() {
                 Assert.assertTrue(behaviour.done());
             }
+
+
+            @Override
+            public String toString() {
+                return "behaviourDone(" + behaviour + ')';
+            }
         };
     }
 
@@ -30,6 +37,12 @@ public class AgentAssert {
         return new Assertion() {
             public void check() {
                 Assert.assertFalse(behaviour.done());
+            }
+
+
+            @Override
+            public String toString() {
+                return "behaviourNotDone(" + behaviour + ')';
             }
         };
     }
@@ -40,6 +53,12 @@ public class AgentAssert {
             public void check() {
                 logString.assertContent(expected);
             }
+
+
+            @Override
+            public String toString() {
+                return "log(" + expected + ')';
+            }
         };
     }
 
@@ -48,6 +67,12 @@ public class AgentAssert {
         return new Assertion() {
             public void check() {
                 logString.assertContent(pattern);
+            }
+
+
+            @Override
+            public String toString() {
+                return "log(" + pattern + ')';
             }
         };
     }
@@ -60,6 +85,12 @@ public class AgentAssert {
                     assertThat(log.getContent(), containsString(expectedPart));
                 }
             }
+
+
+            @Override
+            public String toString() {
+                return "logContains({" + StringUtils.join(expectedParts, ',') + "})";
+            }
         };
     }
 
@@ -69,6 +100,12 @@ public class AgentAssert {
             public void check() {
                 logString.assertAndClear(expected);
             }
+
+
+            @Override
+            public String toString() {
+                return "logAndClear(" + expected + ')';
+            }
         };
     }
 
@@ -77,6 +114,12 @@ public class AgentAssert {
         return new Assertion() {
             public void check() {
                 logString.assertAndClear(pattern);
+            }
+
+
+            @Override
+            public String toString() {
+                return "logAndClear(" + pattern + ')';
             }
         };
     }
